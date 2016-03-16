@@ -1,0 +1,46 @@
+.TH NEOSC-SHELL "1" "April 2015" "" ""
+.SH NAME
+neosc-shell \- a configuration shell for the YubiKey NEO(-N)
+.SH SYNOPSIS
+.B neosc-shell
+[\fIOPTION\fR]...
+.SH DESCRIPTION
+.PP
+neosc-shell is a configuration shell for the YubiKey NEO(-N). The major difference to Yubico's original tools is the ability to specify a device serial number and the unionize CCID and HID access through a single utility.
+.TP
+\fB\-s\fR \fB\fIserial\fR\fR
+use YubiKey with given serial number
+.TP
+\fB\-u\fR
+use first USB attached YubiKey without serial number
+.TP
+\fB\-n\fR
+use first NFC attached YubiKey
+.TP
+\fB\-f\fR
+enable commands that reset all configuration data
+.TP
+\fB\-F\fR
+enable commands that may brick your device (requires -f too)
+.TP
+\fB\-q\fR
+be more quiet
+.TP
+\fB\-v\fR
+be more verbose
+.TP
+\fB\-e\fR
+terminate in case of error (for batch processing)
+.TP
+\fB\-N\fR
+do not print a prompt
+.TP
+\fB\-h\fR
+show help
+.SH AUTHOR
+Written by Andreas Steinmetz
+.SH COPYRIGHT
+Copyright \(co 2015 Andreas Steinmetz
+.br
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
