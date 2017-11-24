@@ -193,7 +193,8 @@ static void neohelp(void)
 	"\t\tlang\t\t(this and 'text' or 'url'), language to store\n"
 	"\tset-scanmap\t\tconfigure device scan code map\n"
 	"\t\tscanmap\t\toptional, 45 byte scan map\n"
-	"\tset-mode\t\tconfigure device operation mode\n"
+	"\tset-mode\t\tconfigure device operation mode (YubiKey NEO)\n"
+	"\tset-mode-mgr\t\tconfigure device operation mode (YubiKey 4)\n"
 	"\t\tmode\t\trequired, operation mode (0-6)\n"
 	"\t\tcrtimeout\trequired, challenge-response timeout\n"
 	"\t\tautoejecttime\trequired, auto eject time\n"
@@ -629,6 +630,14 @@ static int neohandler(char *cmd)
 		if(!var[AUTOEJECTTIME].valid)goto err1;
 		mode=8;
 	}
+	else if(!strcmp(cmd,"set-mode-mgr"))
+	{
+		if(!var[MODE].valid)goto err1;
+		if(var[MODE].value==0x03&&enable<3)goto err1;
+		if(!var[CRTIMEOUT].valid)goto err1;
+		if(!var[AUTOEJECTTIME].valid)goto err1;
+		mode=18;
+	}
 	else if(!strcmp(cmd,"reset-slot"))
 	{
 		if(!(enable&1))goto err1;
@@ -693,7 +702,11 @@ static int neohandler(char *cmd)
 
 	if(neosc_pcsc_open(&ctx,serial))goto err1;
 	if(neosc_pcsc_lock(ctx))goto err2;
-	if(neosc_neo_select(ctx,&info))goto err3;
+	if(mode==18)
+	{
+		if(neosc_neo_select_mgr(ctx))goto err3;
+	}
+	else if(neosc_neo_select(ctx,&info))goto err3;
 
 	switch(mode)
 	{
@@ -871,6 +884,10 @@ static int neohandler(char *cmd)
 
 	case 17:if((r=neosc_neo_read_serial(ctx,&val)))break;
 		printf("serial: %d\n",val);
+		break;
+
+	case 18:r=neosc_neo_setmode_mgr(ctx,var[MODE].value,
+			var[CRTIMEOUT].value,var[AUTOEJECTTIME].value);
 		break;
 	}
 
@@ -1520,6 +1537,8 @@ static void usage(void)
 	  "-s <serial>\tuse YubiKey with given serial number\n"
 	  "-u\t\tuse first USB attached YubiKey without serial number\n"
 	  "-n\t\tuse first NFC attached YubiKey\n"
+	  "-U\t\tuse first U2F enabled YubiKey 4 (nano)\n"
+	  "-C\t\tuse first U2F disabled YubiKey 4 (nano)\n"
 	  "-f\t\tenable commands that reset all configuration data\n"
 	  "-F\t\tenable commands that may brick your device (requires -f too)\n"
 	  "-q\t\tbe more quiet\n"
@@ -1545,7 +1564,7 @@ int main(int argc,char *argv[])
 	signal(SIGQUIT,SIG_IGN);
 	signal(SIGPIPE,SIG_IGN);
 
-	while((c=getopt(argc,argv,"s:unfFqveNh"))!=-1)switch(c)
+	while((c=getopt(argc,argv,"s:unUCfFqveNh"))!=-1)switch(c)
 	{
 	case 's':
 		if(serial!=NEOSC_ANY_YUBIKEY)usage();
@@ -1558,6 +1577,14 @@ int main(int argc,char *argv[])
 	case 'n':
 		if(serial!=NEOSC_ANY_YUBIKEY)usage();
 		serial=NEOSC_NFC_YUBIKEY;
+		break;
+	case 'U':
+		if(serial!=NEOSC_ANY_YUBIKEY)usage();
+		serial=NEOSC_U2F_YUBIKEY4;
+		break;
+	case 'C':
+		if(serial!=NEOSC_ANY_YUBIKEY)usage();
+		serial=NEOSC_NOU2F_YUBIKEY4;
 		break;
 
 	case 'f':

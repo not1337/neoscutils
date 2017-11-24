@@ -35,6 +35,8 @@ static void usage(void)
 	"-s <serial>    use YubiKey with given serial number\n"
 	"-u             use first USB attached YubiKey without serial number\n"
 	"-n             use first NFC attached YubiKey\n"
+	"-U		use first U2F enabled YubiKey 4 (nano)\n"
+	"-C		use first U2F disabled YubiKey 4 (nano)\n"
 	"-h             this help text\n");
     exit(1);
 }
@@ -47,7 +49,7 @@ int main(int argc,char *argv[])
 	int serial=NEOSC_ANY_YUBIKEY;
 	void *ctx;
 
-	while((c=getopt(argc,argv,"NdoOps:unh"))!=-1)switch(c)
+	while((c=getopt(argc,argv,"NdoOps:unUCh"))!=-1)switch(c)
 	{
 	case 'N':
 		if(mode)usage();
@@ -80,6 +82,14 @@ int main(int argc,char *argv[])
 	case 'n':
 		if(serial!=NEOSC_ANY_YUBIKEY)usage();
 		serial=NEOSC_NFC_YUBIKEY;
+		break;
+	case 'U':
+		if(serial!=NEOSC_ANY_YUBIKEY)usage();
+		serial=NEOSC_U2F_YUBIKEY4;
+		break;
+	case 'C':
+		if(serial!=NEOSC_ANY_YUBIKEY)usage();
+		serial=NEOSC_NOU2F_YUBIKEY4;
 		break;
 
 	case 'h':

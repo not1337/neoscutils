@@ -1,5 +1,5 @@
 #neoscutils
-Utilities for the YubiKey NEO(-N)
+Utilities for the YubiKey NEO(-N)/4 (nano)
 
 ===============================================================================
 
@@ -28,6 +28,8 @@ Usage: neosc-appselect [-s <serial>|-u|-n] -N|-d|-o|-O|-p
 -s <serial>    use YubiKey with given serial number
 -u             use first USB attached YubiKey without serial number
 -n             use first NFC attached YubiKey
+-U             use first U2F enabled YubiKey 4 (nano)
+-C             use first U2F disabled YubiKey 4 (nano)
 
 ===============================================================================
 
@@ -50,6 +52,8 @@ Usage: neosc-shell <options>
 -s <serial>     use YubiKey with given serial number
 -u              use first USB attached YubiKey without serial number
 -n              use first NFC attached YubiKey
+-U              use first U2F enabled YubiKey 4 (nano)
+-C              use first U2F disabled YubiKey 4 (nano)
 -f              enable commands that reset all configuration data
 -F              enable commands that may brick your device (requires -f too)
 -q              be more quiet
